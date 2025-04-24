@@ -1,55 +1,26 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useUserRole } from '@/hooks/useUserRole';
-import { toast } from 'sonner';
-import { UserRole } from '@/types';
+import { useAuth } from '@/hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { updateRole } = useUserRole();
+  const { signIn, signUp, loading } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Mock login - to be replaced with Supabase auth
-    setTimeout(() => {
-      // Determine role based on email for demo purposes
-      let role: UserRole = 'student';
-      if (email.includes('admin')) {
-        role = 'admin';
-      } else if (email.includes('assessor')) {
-        role = 'assessor';
-      }
-      
-      updateRole(role);
-      toast.success('Logged in successfully');
-      navigate('/dashboard');
-      setIsLoading(false);
-    }, 1000);
+    await signIn(email, password);
   };
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Mock signup - to be replaced with Supabase auth
-    setTimeout(() => {
-      toast.success('Account created successfully');
-      updateRole('student');
-      navigate('/dashboard');
-      setIsLoading(false);
-    }, 1000);
+    await signUp(email, password, name);
   };
 
   return (
@@ -99,8 +70,8 @@ const Login = () => {
                         required 
                       />
                     </div>
-                    <Button disabled={isLoading} className="w-full">
-                      {isLoading ? "Logging in..." : "Login"}
+                    <Button disabled={loading} className="w-full">
+                      {loading ? "Signing in..." : "Sign In"}
                     </Button>
                   </div>
                 </form>
@@ -141,20 +112,13 @@ const Login = () => {
                         required 
                       />
                     </div>
-                    <Button disabled={isLoading} className="w-full">
-                      {isLoading ? "Creating account..." : "Create account"}
+                    <Button disabled={loading} className="w-full">
+                      {loading ? "Creating account..." : "Create account"}
                     </Button>
                   </div>
                 </form>
               </TabsContent>
             </CardContent>
-            
-            <CardFooter className="flex flex-col text-center text-sm text-muted-foreground">
-              <p>
-                For demo purposes: Use emails containing "admin" or "assessor" to login with those roles.
-                All other emails will be registered as students.
-              </p>
-            </CardFooter>
           </Tabs>
         </Card>
       </div>

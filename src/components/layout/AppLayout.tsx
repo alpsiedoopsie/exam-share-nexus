@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from './AppSidebar';
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from "sonner";
 
 interface AppLayoutProps {
@@ -12,13 +13,7 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // Mock logout for now. To be implemented with Supabase later
-    toast.success("Logged out successfully");
-    navigate("/login");
-  };
+  const { signOut } = useAuth();
 
   return (
     <SidebarProvider>
@@ -28,7 +23,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 md:px-6">
             <SidebarTrigger />
             <h1 className="text-2xl font-bold text-exam-primary">Exam Share Nexus</h1>
-            <Button variant="ghost" onClick={handleLogout}>Logout</Button>
+            <Button variant="ghost" onClick={signOut}>Sign Out</Button>
           </header>
           <main className="flex-grow p-4 md:p-6 bg-gray-50">
             {children}
