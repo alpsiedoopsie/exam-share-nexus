@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from '@/hooks/useAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState<'student' | 'assessor'>('student');
   const { signIn, signUp, loading } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -20,7 +22,7 @@ const Login = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signUp(email, password, name);
+    await signUp(email, password, name, role);
   };
 
   return (
@@ -111,6 +113,19 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required 
                       />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Role</Label>
+                      <RadioGroup value={role} onValueChange={(value: 'student' | 'assessor') => setRole(value)}>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="student" id="student" />
+                          <Label htmlFor="student">Student</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="assessor" id="assessor" />
+                          <Label htmlFor="assessor">Assessor</Label>
+                        </div>
+                      </RadioGroup>
                     </div>
                     <Button disabled={loading} className="w-full">
                       {loading ? "Creating account..." : "Create account"}
